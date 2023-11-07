@@ -1,17 +1,18 @@
 import { RocketIcon } from "@radix-ui/react-icons"
-import { Handle, Position } from "reactflow"
+import { Handle, NodeProps, Position } from "reactflow"
 import { Card, CardContent } from "@/components/ui/card"
 
-export function CustomNode(data: { label: string; job: string }) {
+export const TopBottomCustomNode: React.FC<NodeProps> = (props) => {
+  const { label, job } = props.data
   return (
-    <Card className="">
+    <Card>
       <CardContent className="flex px-4 py-2">
         <div className="flex h-12 w-12 items-center justify-center rounded-full border  bg-background text-foreground">
           <RocketIcon />
         </div>
         <div className="ml-2">
-          <div className="text-lg font-bold">Node</div>
-          <div className="text-muted-foreground">Task</div>
+          <div className="text-lg font-bold">{label}</div>
+          <div className="text-muted-foreground">{job}</div>
         </div>
       </CardContent>
 

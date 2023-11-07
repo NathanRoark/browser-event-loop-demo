@@ -12,14 +12,16 @@ import ReactFlow, {
   OnConnect,
   Background,
   Controls,
+  BackgroundVariant,
+  NodeTypes,
 } from "reactflow"
 
 import "reactflow/dist/style.css"
 
-import { CustomNode } from "./card-node"
+import { CustomNode } from "./custom-node"
 
-const nodeTypes = {
-  custom: CustomNode,
+const customNodeTypes: NodeTypes = {
+  custom_node: CustomNode,
 }
 
 export default function App({
@@ -52,17 +54,17 @@ export default function App({
   )
 
   return (
-    <div className="h-[calc(100vh-4rem)] md:h-[calc(100vh-4rem)]">
+    <div className="h-[calc(100vh-4rem)] md:h-[calc(100vh-3.7em)]">
       <ReactFlow
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        nodeTypes={nodeTypes}
+        nodeTypes={customNodeTypes}
         fitView
       >
-        <Background variant="dots" />
+        <Background variant={BackgroundVariant.Dots} />
         <Controls />
       </ReactFlow>
     </div>
