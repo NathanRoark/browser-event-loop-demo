@@ -19,9 +19,13 @@ import ReactFlow, {
 import "reactflow/dist/style.css"
 
 import { CustomNode } from "./custom-node"
+import { EventLoopCustomNode } from "./custom-node-event-loop"
+import { EventNode } from "@/components/nodes/event-node"
 
 const customNodeTypes: NodeTypes = {
   custom_node: CustomNode,
+  event_loop_node: EventLoopCustomNode,
+  event_node: EventNode,
 }
 
 export default function App({
