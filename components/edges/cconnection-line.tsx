@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { getBezierPath, BaseEdge, EdgeLabelRenderer } from "reactflow"
 
-export default function NormalEdge({
+export function NormalEdge({
   id,
   sourceX,
   sourceY,

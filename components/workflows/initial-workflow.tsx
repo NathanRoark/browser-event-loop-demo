@@ -14,18 +14,27 @@ import ReactFlow, {
   Controls,
   BackgroundVariant,
   NodeTypes,
+  EdgeTypes,
 } from "reactflow"
 
 import "reactflow/dist/style.css"
-
-import { CustomNode } from "./custom-node"
-import { EventLoopCustomNode } from "./custom-node-event-loop"
-import { EventNode } from "@/components/nodes/event-node"
+import { EventLoopCustomNode } from "@/components/nodes/event-loop-node"
+import { JSEventNode } from "@/components/nodes/js-event-node"
+import { RenderEventNode } from "@/components/nodes/render-event-node"
+import { RenderNode } from "@/components/nodes/render-node"
+import { JSEdge } from "@/components/edges/js-edge"
+import { RenderSubnode } from "@/components/nodes/render-subnode"
 
 const customNodeTypes: NodeTypes = {
-  custom_node: CustomNode,
   event_loop_node: EventLoopCustomNode,
-  event_node: EventNode,
+  js_event_node: JSEventNode,
+  render_event_node: RenderEventNode,
+  render_node: RenderNode,
+  render_subnode: RenderSubnode,
+}
+
+const customEdgeTypes: EdgeTypes = {
+  js_edge: JSEdge,
 }
 
 export default function App({
@@ -66,10 +75,13 @@ export default function App({
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         nodeTypes={customNodeTypes}
+        edgeTypes={customEdgeTypes}
+        proOptions={{ hideAttribution: true }}
         fitView
+        nodesDraggable={false}
       >
         <Background variant={BackgroundVariant.Dots} />
-        <Controls />
+        {/* <Controls /> */}
       </ReactFlow>
     </div>
   )
