@@ -72,7 +72,7 @@ const initialNodes: Node[] = [
     type: "render_event_node",
     data: {
       label: "DOM or CSSOM Update",
-      job: "there is a need to update the content rendered on the page",
+      job: "update the content rendered on the page",
     },
     position: { x: 0, y: -200 },
     sourcePosition: Position.Bottom,

@@ -1,7 +1,11 @@
 import { Handle, NodeProps, Position } from "reactflow"
 import { Card, CardContent } from "@/components/ui/card"
-import { useAtom } from "jotai"
-import { jsEventCountAtom, renderEventCountAtom } from "@/lib/atoms"
+import { useAtom, useAtomValue } from "jotai"
+import {
+  jsEventCountAtom,
+  renderEventCountAtom,
+  showingRenderingAnimationAtom,
+} from "@/lib/atoms"
 import { useEffect, useRef } from "react"
 
 export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
@@ -9,6 +13,7 @@ export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
 
   const [jsEventCount, setJSEventCount] = useAtom(jsEventCountAtom)
   const [renderEventCount, setRenderEventCount] = useAtom(renderEventCountAtom)
+  const showingRenderingAnimation = useAtomValue(showingRenderingAnimationAtom)
 
   // Vercel Colors
   const colors = [
@@ -41,7 +46,7 @@ export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
       if (jsEventCount > 0) {
         setJSEventCount((prev) => prev - 1)
       }
-    }, 1000) // time in ms minus the distance the circle is from pi)
+    }, 2000) // time in ms minus the distance the circle is from pi
     return () => clearInterval(interval)
   }, [jsEventCount])
 
@@ -50,7 +55,7 @@ export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
       if (renderEventCount > 0) {
         setRenderEventCount((prev) => prev - 1)
       }
-    }, 1000) // time in ms minus the distance the circle is from pi)
+    }, 2000) // time in ms minus the distance the circle is from pi
     return () => clearInterval(interval)
   }, [renderEventCount])
 
@@ -67,11 +72,11 @@ export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
           <>
             {[...Array(jsEventCount)].map((i) => (
               <div
-                className={`mb-1 mr-1 h-4 w-4 rounded-full bg-[#fcd34d]`}
+                className="mb-1 mr-1 h-4 w-4 rounded-full bg-[#fcd34d]"
                 key={"js-event-" + i}
               ></div>
             ))}
-            <div className={`mb-1 mr-1 h-4 w-4`}></div>
+            <div className="mb-1 mr-1 h-4 w-4"></div>
           </>
         </div>
         <div>
@@ -111,19 +116,19 @@ export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
           <>
             {[...Array(renderEventCount)].map((i) => (
               <div
-                className={`mb-1 mr-1 h-4 w-4 rounded-full bg-[#0761d1]`}
+                className="mb-1 mr-1 h-4 w-4 rounded-full bg-[#0761d1]"
                 key={"js-event-" + i}
               ></div>
             ))}
-            <div className={`mb-1 mr-1 h-4 w-4`}></div>
+            <div className="mb-1 mr-1 h-4 w-4"></div>
           </>
         </div>
-        <div className="ml-4">
+        <div className="ml-4 pr-2">
           <div className="text-lg font-bold">{label}</div>
-          <div className="text-muted-foreground">JS Events: {jsEventCount}</div>
+          {/* <div className="text-muted-foreground">JS Events: {jsEventCount}</div>
           <div className="text-muted-foreground">
             Render Events: {renderEventCount}
-          </div>
+          </div> */}
         </div>
       </CardContent>
 

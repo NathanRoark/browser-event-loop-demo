@@ -69,6 +69,7 @@ export default function App({
   return (
     <div className="h-[calc(100vh-4rem)] md:h-[calc(100vh-3.7em)]">
       <ReactFlow
+        zoomOnDoubleClick={false}
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
@@ -78,10 +79,9 @@ export default function App({
         edgeTypes={customEdgeTypes}
         proOptions={{ hideAttribution: true }}
         fitView
-        nodesDraggable={false}
       >
         <Background variant={BackgroundVariant.Dots} />
-        {/* <Controls /> */}
+        <Controls />
       </ReactFlow>
     </div>
   )

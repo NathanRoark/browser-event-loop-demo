@@ -34,6 +34,7 @@ export const RenderSubnode: React.FC<NodeProps> = (props) => {
       setBorderColor("")
     }
   }, [count])
+
   return (
     <Card className={cn(borderColor)}>
       <CardContent className="flex px-4 py-2">

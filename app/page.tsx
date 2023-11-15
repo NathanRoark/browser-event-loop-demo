@@ -30,11 +30,10 @@ export default function IndexPage() {
             Browser Event Loop Playground
           </p>
           <p className="py-2">
-           This is a playground for the browser event loop. It is a tool to help you understand how the browser event loop works.
+            This is a playground for the browser event loop. It is a tool to
+            help you understand how the browser event loop works.
           </p>
-          <p className="py-2">
-            This app is built with ReactFlow and Next.js.
-          </p>
+          <p className="py-2">This app is built with ReactFlow and Next.js.</p>
         </PageHeaderDescription>
         <div className="flex w-full items-center space-x-4 pb-8  pt-4 sm:pl-8 md:pb-10 lg:pt-8">
           <Link href="/playground" className={buttonVariants()}>
