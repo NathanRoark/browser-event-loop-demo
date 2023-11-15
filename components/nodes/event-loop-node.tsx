@@ -6,7 +6,7 @@ import {
   renderEventCountAtom,
   showingRenderingAnimationAtom,
 } from "@/lib/atoms"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 
 export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
   const { label, job } = props.data
@@ -65,6 +65,43 @@ export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
     console.log(angle)
   }, [jsEventCount])
 
+  // New state variables for cx and cy
+  const [cx, setCx] = useState(50)
+  const [cy, setCy] = useState(50)
+
+  const [pi, setPi] = useState(0)
+  const [pi2, setPi2] = useState(0)
+
+  useEffect(() => {
+    const radius = 40 // Radius of the circle's path
+    const centerX = 50
+    const centerY = 50
+    let angle = 0 // Starting angle
+
+    const interval = setInterval(() => {
+      // Update angle
+      angle = (angle + 1) % 360
+
+      // Calculate new position
+      const radian = (angle * Math.PI) / 180
+      const newCx = centerX + radius * Math.cos(radian)
+      const newCy = centerY + radius * Math.sin(radian)
+
+      // Update state
+      setCx(newCx)
+      setCy(newCy)
+
+      // Update angle triggers
+      if (angle == 180) {
+        setPi((prev) => prev + 1)
+      } else if (angle == 0) {
+        setPi2((prev) => prev + 1)
+      }
+    }, 10) // Update every 10ms for smooth enough animation
+
+    return () => clearInterval(interval)
+  }, [])
+
   return (
     <Card>
       <CardContent className="bg-Background flex p-4">
@@ -79,39 +116,42 @@ export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
             <div className="mb-1 mr-1 h-4 w-4"></div>
           </>
         </div>
-        <div>
-          <svg
-            className="bg-Background h-48 w-48"
-            viewBox="0 0 100 100"
-            ref={svgRef}
-          >
-            <circle
-              stroke="#ccc"
-              strokeWidth="2"
-              cx="50"
-              cy="50"
-              r="44"
-              fill="Background"
-            />
-            <circle
-              strokeWidth="3"
-              cx="8"
-              cy="54"
-              r="6"
-              stroke="#ccc"
-              ref={circleRef}
-            >
-              <animateTransform
-                attributeName="transform"
-                dur="2s"
-                type="rotate"
-                from="0 50 48"
-                to="360 50 52"
-                repeatCount="indefinite"
-              />
-            </circle>
-          </svg>
-        </div>
+        <svg className="h-60 w-60" viewBox="0 0 100 100" ref={svgRef}>
+          <circle
+            stroke="#ccc"
+            strokeWidth="2"
+            cx="50"
+            cy="50"
+            r="40"
+            className=""
+          />
+          <circle
+            strokeWidth="2"
+            cx={cx}
+            cy={cy}
+            r="6"
+            stroke="#ccc"
+            ref={circleRef}
+          />
+          {/* line at 2 pi to represent a render step */}
+          <line
+            x1="100"
+            y1="50"
+            x2="80"
+            y2="50"
+            stroke="#0761d1"
+            strokeWidth="6"
+          />
+          {/* line at pi to represent js step */}
+          <line
+            x1="0"
+            y1="50"
+            x2="20"
+            y2="50"
+            stroke="#fcd34d"
+            strokeWidth="6"
+          />
+        </svg>
         <div>
           <>
             {[...Array(renderEventCount)].map((i) => (
@@ -125,13 +165,10 @@ export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
         </div>
         <div className="ml-4 pr-2">
           <div className="text-lg font-bold">{label}</div>
-          {/* <div className="text-muted-foreground">JS Events: {jsEventCount}</div>
-          <div className="text-muted-foreground">
-            Render Events: {renderEventCount}
-          </div> */}
+          <div className="font-mono">1 pi: {pi}</div>
+          <div className="font-mono">2 pi: {pi2}</div>
         </div>
       </CardContent>
-
       <Handle
         id="top-right-target"
         type="target"
