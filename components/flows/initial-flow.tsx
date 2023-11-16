@@ -37,7 +37,7 @@ const customEdgeTypes: EdgeTypes = {
   js_edge: JSEdge,
 }
 
-export default function App({
+export function Flow({
   nodes: initNodes,
   edges: initEdges,
 }: {
