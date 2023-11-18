@@ -6,7 +6,7 @@ import {
   renderEventCountAtom,
   showingRenderingAnimationAtom,
 } from "@/lib/atoms"
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 
 function JSCountComponent({ count }: { count: number }) {
   return Array.from({ length: count }, (_, index) => (
@@ -27,15 +27,13 @@ function RenderCountComponent({ count }: { count: number }) {
 }
 
 export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
-  const { label, job } = props.data
-
+  const { label } = props.data
   const [jsEventCount, setJSEventCount] = useAtom(jsEventCountAtom)
   const [renderEventCount, setRenderEventCount] = useAtom(renderEventCountAtom)
   const showingRenderingAnimation = useAtomValue(showingRenderingAnimationAtom)
 
   // Vercel Colors
   const colors = [
-    "#29bc9b",
     "#fcd34d",
     "#f26522",
     "#e60000",
@@ -54,18 +52,18 @@ export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
   const [pi, setPi] = useState(0)
   const [pi2, setPi2] = useState(0)
 
-  function handleJSEvent() {
+  const handleJSEvent = useCallback(() => {
     setJSEventCount((prev) => {
       if (prev <= 0) {
         return 0
       }
       return prev - 1
     })
-  }
+  }, [setJSEventCount])
 
-  function handleRenderEvent() {
+  const handleRenderEvent = useCallback(() => {
     setRenderEventCount(0)
-  }
+  }, [setRenderEventCount])
 
   useEffect(() => {
     const radius = 40 // Radius of the circle's path
@@ -99,7 +97,7 @@ export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
     }, 10) // Update every 10ms for smooth enough animation
 
     return () => clearInterval(interval)
-  }, [showingRenderingAnimation]) // Add showingRenderingAnimation as a dependency
+  }, [showingRenderingAnimation, handleJSEvent, handleRenderEvent]) // Add showingRenderingAnimation as a dependency
 
   return (
     <Card className="max-h-72">
@@ -124,6 +122,7 @@ export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
             r="6"
             stroke="#ccc"
             ref={circleRef}
+            fill="Background"
           />
           {/* line at 2 pi to represent a render step */}
           <line
@@ -170,12 +169,6 @@ export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
         className="w-16 bg-primary"
         style={{ left: "25%" }}
       />
-      {/* <Handle
-        id="left-target"
-        type="target"
-        position={Position.Left}
-        className="w-16 bg-primary"
-      /> */}
       <Handle
         id="left-top-target"
         type="target"

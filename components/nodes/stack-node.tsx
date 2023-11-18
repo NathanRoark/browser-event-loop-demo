@@ -2,7 +2,7 @@ import { NodeProps, Position, Handle } from "reactflow"
 import { Card, CardContent } from "@/components/ui/card"
 import { useAtomValue } from "jotai"
 import { jsEventCountAtom } from "@/lib/atoms"
-import { useState, useEffect, use } from "react"
+import { useState, useEffect, use, useCallback } from "react"
 
 function StackSizeComponent({ count }: { count: number }) {
   return Array.from({ length: count }, (_, index) => (
@@ -26,37 +26,29 @@ export const StackNode: React.FC<NodeProps> = (props) => {
     return () => clearInterval(interval)
   }, [])
 
-  function handleStackSize() {
+  const handleStackSize = useCallback(() => {
     const newStackSize = Math.floor(Math.random() * 12) + 8
     setStackSize(newStackSize)
-  }
+  }, [])
 
-  function handleJSEvent() {
-    console.log("stack size", stackSize)
+  const handleJSEvent = useCallback(() => {
     if (stackSize <= 0) {
       handleStackSize()
     }
-  }
+  }, [stackSize, handleStackSize])
 
   useEffect(() => {
     if (currentCount < prevCount) {
       handleJSEvent()
     }
     setPrevCount(currentCount)
-  }, [currentCount])
+  }, [currentCount, handleJSEvent, prevCount])
 
   return (
     <Card>
       <CardContent className="flex h-96 w-72 justify-between px-4 py-2">
         <div>
-          {/* <div className="flex h-12 w-12 items-center justify-center rounded-full border bg-background text-foreground">
-            <RocketIcon />
-          </div> */}
-          <div className=" p-2 font-semibold">
-            <div
-              className="mb-1 mr-1 rounded-md bg-yellow-500 "
-              key={"js-event-" + "index"}
-            />
+          <div className="h-full overflow-y-hidden p-2 font-semibold">
             <StackSizeComponent count={stackSize} />
           </div>
         </div>

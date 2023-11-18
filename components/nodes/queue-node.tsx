@@ -24,9 +24,6 @@ export const QueueNode: React.FC<NodeProps> = (props) => {
     <Card>
       <CardContent className="flex h-96 w-72 justify-between px-4 py-2">
         <div>
-          {/* <div className="flex h-12 w-12 items-center justify-center rounded-full border bg-background text-foreground">
-            <RocketIcon />
-          </div> */}
           <div className="h-full overflow-y-hidden p-2 font-semibold">
             <JSCountComponent count={count} />
           </div>
