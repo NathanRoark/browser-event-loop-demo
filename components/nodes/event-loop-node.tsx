@@ -8,6 +8,24 @@ import {
 } from "@/lib/atoms"
 import { useEffect, useRef, useState } from "react"
 
+function JSCountComponent({ count }: { count: number }) {
+  return Array.from({ length: count }, (_, index) => (
+    <div
+      className="mb-1 mr-1 h-4 w-4 rounded-full bg-[#0761d1]"
+      key={"js-event-" + index}
+    />
+  ))
+}
+
+function RenderCountComponent({ count }: { count: number }) {
+  return Array.from({ length: count }, (_, index) => (
+    <div
+      className="mb-1 mr-1 h-4 w-4 rounded-full bg-[#fcd34d]"
+      key={"render-event-" + index}
+    />
+  ))
+}
+
 export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
   const { label, job } = props.data
 
@@ -29,48 +47,25 @@ export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
   const svgRef = useRef<SVGSVGElement | null>(null)
   const circleRef = useRef<SVGCircleElement | null>(null)
 
-  const pauseAnimation = () => {
-    if (svgRef.current) {
-      svgRef.current.pauseAnimations()
-    }
-  }
-  const startAnimation = () => {
-    if (svgRef.current) {
-      svgRef.current.unpauseAnimations()
-    }
-  }
-
-  // trigger an event when the circle is at pi or 2pi
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (jsEventCount > 0) {
-        setJSEventCount((prev) => prev - 1)
-      }
-    }, 2000) // time in ms minus the distance the circle is from pi
-    return () => clearInterval(interval)
-  }, [jsEventCount])
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (renderEventCount > 0) {
-        setRenderEventCount((prev) => prev - 1)
-      }
-    }, 2000) // time in ms minus the distance the circle is from pi
-    return () => clearInterval(interval)
-  }, [renderEventCount])
-
-  // print the current angle of the circle
-  useEffect(() => {
-    const angle = circleRef.current?.getAttribute("transform")
-    console.log(angle)
-  }, [jsEventCount])
-
   // New state variables for cx and cy
   const [cx, setCx] = useState(50)
   const [cy, setCy] = useState(50)
 
   const [pi, setPi] = useState(0)
   const [pi2, setPi2] = useState(0)
+
+  function handleJSEvent() {
+    setJSEventCount((prev) => {
+      if (prev <= 0) {
+        return 0
+      }
+      return prev - 1
+    })
+  }
+
+  function handleRenderEvent() {
+    setRenderEventCount(0)
+  }
 
   useEffect(() => {
     const radius = 40 // Radius of the circle's path
@@ -79,42 +74,39 @@ export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
     let angle = 0 // Starting angle
 
     const interval = setInterval(() => {
-      // Update angle
-      angle = (angle + 1) % 360
+      if (!showingRenderingAnimation) {
+        // Update angle
+        angle = (angle + 1) % 360
 
-      // Calculate new position
-      const radian = (angle * Math.PI) / 180
-      const newCx = centerX + radius * Math.cos(radian)
-      const newCy = centerY + radius * Math.sin(radian)
+        // Calculate new position
+        const radian = (angle * Math.PI) / 180
+        const newCx = centerX + radius * Math.cos(radian)
+        const newCy = centerY + radius * Math.sin(radian)
 
-      // Update state
-      setCx(newCx)
-      setCy(newCy)
+        // Update state
+        setCx(newCx)
+        setCy(newCy)
 
-      // Update angle triggers
-      if (angle == 180) {
-        setPi((prev) => prev + 1)
-      } else if (angle == 0) {
-        setPi2((prev) => prev + 1)
+        // Update angle triggers
+        if (angle === 180) {
+          handleJSEvent()
+          setPi((prev) => prev + 1)
+        } else if (angle === 0) {
+          handleRenderEvent()
+          setPi2((prev) => prev + 1)
+        }
       }
     }, 10) // Update every 10ms for smooth enough animation
 
     return () => clearInterval(interval)
-  }, [])
+  }, [showingRenderingAnimation]) // Add showingRenderingAnimation as a dependency
 
   return (
-    <Card>
+    <Card className="max-h-72">
       <CardContent className="bg-Background flex p-4">
         <div>
-          <>
-            {[...Array(jsEventCount)].map((i) => (
-              <div
-                className="mb-1 mr-1 h-4 w-4 rounded-full bg-[#fcd34d]"
-                key={"js-event-" + i}
-              ></div>
-            ))}
-            <div className="mb-1 mr-1 h-4 w-4"></div>
-          </>
+          <RenderCountComponent count={jsEventCount} />
+          <div className="mb-1 mr-1 h-4 w-4"></div>
         </div>
         <svg className="h-60 w-60" viewBox="0 0 100 100" ref={svgRef}>
           <circle
@@ -123,7 +115,7 @@ export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
             cx="50"
             cy="50"
             r="40"
-            className=""
+            fill="Background"
           />
           <circle
             strokeWidth="2"
@@ -153,20 +145,15 @@ export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
           />
         </svg>
         <div>
-          <>
-            {[...Array(renderEventCount)].map((i) => (
-              <div
-                className="mb-1 mr-1 h-4 w-4 rounded-full bg-[#0761d1]"
-                key={"js-event-" + i}
-              ></div>
-            ))}
-            <div className="mb-1 mr-1 h-4 w-4"></div>
-          </>
+          <JSCountComponent count={renderEventCount} />
+          <div className="mb-1 mr-1 h-4 w-4"></div>
         </div>
         <div className="ml-4 pr-2">
           <div className="text-lg font-bold">{label}</div>
           <div className="font-mono">1 pi: {pi}</div>
           <div className="font-mono">2 pi: {pi2}</div>
+          <div className="font-mono">JS Events: {jsEventCount}</div>
+          <div className="font-mono">Render Events: {renderEventCount}</div>
         </div>
       </CardContent>
       <Handle
@@ -182,6 +169,26 @@ export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
         position={Position.Top}
         className="w-16 bg-primary"
         style={{ left: "25%" }}
+      />
+      {/* <Handle
+        id="left-target"
+        type="target"
+        position={Position.Left}
+        className="w-16 bg-primary"
+      /> */}
+      <Handle
+        id="left-top-target"
+        type="target"
+        position={Position.Left}
+        className="w-16 bg-primary"
+        style={{ top: "25%" }}
+      />
+      <Handle
+        id="left-bottom-source"
+        type="source"
+        position={Position.Left}
+        className="w-16 bg-primary"
+        style={{ top: "75%" }}
       />
       <Handle
         id="bottom-source"

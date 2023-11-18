@@ -18,31 +18,17 @@ import ReactFlow, {
 } from "reactflow"
 
 import "reactflow/dist/style.css"
-import { EventLoopCustomNode } from "@/components/nodes/event-loop-node"
-import { JSEventNode } from "@/components/nodes/js-event-node"
-import { RenderEventNode } from "@/components/nodes/render-event-node"
-import { RenderNode } from "@/components/nodes/render-node"
-import { JSEdge } from "@/components/edges/js-edge"
-import { RenderSubnode } from "@/components/nodes/render-subnode"
-
-const customNodeTypes: NodeTypes = {
-  event_loop_node: EventLoopCustomNode,
-  js_event_node: JSEventNode,
-  render_event_node: RenderEventNode,
-  render_node: RenderNode,
-  render_subnode: RenderSubnode,
-}
-
-const customEdgeTypes: EdgeTypes = {
-  js_edge: JSEdge,
-}
 
 export function Flow({
   nodes: initNodes,
   edges: initEdges,
+  nodeTypes: nodeTypes,
+  edgeTypes: edgeTypes,
 }: {
   nodes: Node[]
   edges: Edge[]
+  nodeTypes?: NodeTypes
+  edgeTypes?: EdgeTypes
 }) {
   const [nodes, setNodes] = useState<Node[]>(initNodes)
   const [edges, setEdges] = useState<Edge[]>(initEdges)
@@ -75,8 +61,8 @@ export function Flow({
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
-        nodeTypes={customNodeTypes}
-        edgeTypes={customEdgeTypes}
+        nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         proOptions={{ hideAttribution: true }}
         fitView
       >
