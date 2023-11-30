@@ -1,39 +1,29 @@
 import { RocketIcon } from "@radix-ui/react-icons"
-import { Handle, NodeProps, Position } from "reactflow"
+import { NodeProps } from "reactflow"
 import { Card, CardContent } from "@/components/ui/card"
 import { useEffect, useState } from "react"
 import { useAtomValue } from "jotai"
-import { renderEventCountAtom } from "@/lib/atoms"
+import { renderSubnodeAtom } from "@/lib/atoms"
 import { cn } from "@/lib/utils"
 
 export const RenderSubnode: React.FC<NodeProps> = (props) => {
   const { label, description } = props.data
 
-  const count = useAtomValue(renderEventCountAtom)
+  const count = useAtomValue(renderSubnodeAtom)
 
   const [borderColor, setBorderColor] = useState("")
 
   useEffect(() => {
-    if (count == 0) {
-      if (label == "Style") {
-        setBorderColor("border-blue-600")
-        // set to "" after 1 second
-        setTimeout(() => setBorderColor(""), 1000)
-      } else if (label == "Layout") {
-        // set to blue after 1 second
-        setTimeout(() => setBorderColor("border-blue-600"), 1000)
-        // set to "" after 2 seconds
-        setTimeout(() => setBorderColor(""), 2000)
-      } else if (label == "Paint") {
-        // set to blue after 2 seconds
-        setTimeout(() => setBorderColor("border-blue-600"), 2000)
-        // set to "" after 3 seconds
-        setTimeout(() => setBorderColor(""), 3000)
-      }
+    if (count == 1 && label == "Style") {
+      setBorderColor("border-blue-600")
+    } else if (count == 2 && label == "Layout") {
+      setBorderColor("border-blue-600")
+    } else if (count == 3 && label == "Paint") {
+      setBorderColor("border-blue-600")
     } else {
       setBorderColor("")
     }
-  }, [count])
+  }, [count, label])
 
   return (
     <Card className={cn(borderColor)}>

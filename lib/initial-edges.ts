@@ -38,6 +38,7 @@ export const initialEdges: Edge[] = [
     source: "7",
     target: "0",
     animated: true,
+    targetHandle: "top-left-target",
     style: {
       strokeWidth: 2,
       stroke: "#f81ce5",

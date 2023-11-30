@@ -2,11 +2,8 @@ import { RocketIcon } from "@radix-ui/react-icons"
 import { Handle, NodeProps, Position } from "reactflow"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { useAtom, useAtomValue } from "jotai"
-import {
-  renderEventCountAtom,
-  showingRenderingAnimationAtom,
-} from "@/lib/atoms"
+import { useAtom } from "jotai"
+import { renderEventCountAtom } from "@/lib/atoms"
 
 export const RenderEventNode: React.FC<NodeProps> = (props) => {
   const { label, job } = props.data
@@ -16,11 +13,10 @@ export const RenderEventNode: React.FC<NodeProps> = (props) => {
       : Position.Bottom,
   }
   const [count, setCount] = useAtom(renderEventCountAtom)
-  const renderingAnimation = useAtomValue(showingRenderingAnimationAtom)
 
   function handleClick() {
-    if (count <= 0 && !renderingAnimation) {
-      setCount(count + 1)
+    if (count === 0) {
+      setCount(1)
     }
   }
 

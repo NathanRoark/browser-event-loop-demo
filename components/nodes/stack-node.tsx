@@ -2,7 +2,7 @@ import { NodeProps, Position, Handle } from "reactflow"
 import { Card, CardContent } from "@/components/ui/card"
 import { useAtomValue } from "jotai"
 import { jsEventCountAtom } from "@/lib/atoms"
-import { useState, useEffect, use, useCallback } from "react"
+import { useState, useEffect, useCallback } from "react"
 
 function StackSizeComponent({ count }: { count: number }) {
   return Array.from({ length: count }, (_, index) => (

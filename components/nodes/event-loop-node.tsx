@@ -5,6 +5,7 @@ import {
   jsEventCountAtom,
   renderEventCountAtom,
   showingRenderingAnimationAtom,
+  renderSubnodeAtom,
 } from "@/lib/atoms"
 import { useCallback, useEffect, useRef, useState } from "react"
 
@@ -30,8 +31,10 @@ export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
   const { label } = props.data
   const [jsEventCount, setJSEventCount] = useAtom(jsEventCountAtom)
   const [renderEventCount, setRenderEventCount] = useAtom(renderEventCountAtom)
-  const showingRenderingAnimation = useAtomValue(showingRenderingAnimationAtom)
-
+  const [showingRenderingAnimation, setShowingRenderingAnimation] = useAtom(
+    showingRenderingAnimationAtom
+  )
+  const [renderSubnode, setRenderSubnode] = useAtom(renderSubnodeAtom)
   // Vercel Colors
   const colors = [
     "#fcd34d",
@@ -62,19 +65,38 @@ export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
   }, [setJSEventCount])
 
   const handleRenderEvent = useCallback(() => {
-    setRenderEventCount(0)
-  }, [setRenderEventCount])
+    if (renderEventCount > 0) {
+      setShowingRenderingAnimation(true)
+      setRenderEventCount(0)
+      setRenderSubnode((prev) => {
+        if (prev == 0) {
+          return 1
+        }
+        return prev
+      })
+    }
+  }, [
+    setRenderEventCount,
+    setRenderSubnode,
+    setShowingRenderingAnimation,
+    renderEventCount,
+  ])
+
+  const [radius, setRadius] = useState(40)
+  const [centerX, setCenterX] = useState(50)
+  const [centerY, setCenterY] = useState(50)
+  const [angle, setAngle] = useState(0)
 
   useEffect(() => {
-    const radius = 40 // Radius of the circle's path
-    const centerX = 50
-    const centerY = 50
-    let angle = 0 // Starting angle
+    // const radius = 40 // Radius of the circle's path
+    // const centerX = 50
+    // const centerY = 50
+    // let angle = 0 // Starting angle
 
     const interval = setInterval(() => {
       if (!showingRenderingAnimation) {
         // Update angle
-        angle = (angle + 1) % 360
+        setAngle((angle + 1) % 360)
 
         // Calculate new position
         const radian = (angle * Math.PI) / 180
@@ -97,7 +119,15 @@ export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
     }, 10) // Update every 10ms for smooth enough animation
 
     return () => clearInterval(interval)
-  }, [showingRenderingAnimation, handleJSEvent, handleRenderEvent]) // Add showingRenderingAnimation as a dependency
+  }, [
+    handleJSEvent,
+    handleRenderEvent,
+    showingRenderingAnimation,
+    angle,
+    centerX,
+    centerY,
+    radius,
+  ]) // Add showingRenderingAnimation as a dependency
 
   return (
     <Card className="max-h-72">
@@ -149,10 +179,10 @@ export const EventLoopCustomNode: React.FC<NodeProps> = (props) => {
         </div>
         <div className="ml-4 pr-2">
           <div className="text-lg font-bold">{label}</div>
-          <div className="font-mono">1 pi: {pi}</div>
-          <div className="font-mono">2 pi: {pi2}</div>
-          <div className="font-mono">JS Events: {jsEventCount}</div>
-          <div className="font-mono">Render Events: {renderEventCount}</div>
+          {/* <div className="font-mono">1 pi: {pi}</div> */}
+          {/* <div className="font-mono">2 pi: {pi2}</div> */}
+          {/* <div className="font-mono">JS Events: {jsEventCount}</div> */}
+          {/* <div className="font-mono">Render Events: {renderEventCount}</div> */}
         </div>
       </CardContent>
       <Handle
